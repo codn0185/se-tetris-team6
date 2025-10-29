@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import tetris.domain.GameModel;
 import tetris.view.EmptySpace;
- 
 import tetris.view.GamePanel;
 
 public class GameLayout extends JPanel {
@@ -18,7 +17,7 @@ public class GameLayout extends JPanel {
     private ScorePanel scoreboard;
 
     public GameLayout() {
-    super(new GridBagLayout());
+        super(new GridBagLayout());
         setOpaque(true);
         setVisible(false);
 

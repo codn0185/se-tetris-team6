@@ -1,5 +1,6 @@
 package tetris.view;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
@@ -72,16 +73,16 @@ public class TetrisFrame extends JFrame {
             @Override
             public void refreshBoard() {
                 SwingUtilities.invokeLater(() -> {
-                    if (gameLayout != null) gameLayout.repaint();
+                    if (gameLayout != null)
+                        gameLayout.repaint();
                 });
             }
         });
 
         scoreController = new ScoreController(
-            gameModel.getScoreRepository(),
-            gameModel.getScoreEngine(),
-            scoreboardPanel
-        );
+                gameModel.getScoreRepository(),
+                gameModel.getScoreEngine(),
+                scoreboardPanel);
 
         // 시작 화면 설정
         this.setVisible(true);
@@ -142,11 +143,10 @@ public class TetrisFrame extends JFrame {
         layeredPane.add(settingPanel, JLayeredPane.DEFAULT_LAYER);
         // create and bind setting controller so settings persist and apply at runtime
         new tetris.controller.SettingController(
-            gameModel.getScoreRepository(),
-            settingPanel,
-            gameController,
-            this
-        );
+                gameModel.getScoreRepository(),
+                settingPanel,
+                gameController,
+                this);
     }
 
     private void setupPausePanel() {
@@ -258,29 +258,50 @@ public class TetrisFrame extends JFrame {
 
     /**
      * Apply a screen size selection to the frame and contained layered pane/panels.
-     * Adjusts frame size and layer preferred sizes so the UI reflects the selection.
+     * Adjusts frame size and layer preferred sizes so the UI reflects the
+     * selection.
      */
     public void applyScreenSize(tetris.domain.setting.Setting.ScreenSize size) {
-        if (size == null) return;
+        if (size == null)
+            return;
         switch (size) {
             case SMALL:
-                setSize(new Dimension(560, 720));
-                layeredPane.setPreferredSize(new Dimension(560, 720));
+                changeResolution(new Dimension(560, 720));
                 break;
             case MEDIUM:
-                setSize(new Dimension(700, 900));
-                layeredPane.setPreferredSize(new Dimension(700, 900));
+                changeResolution(new Dimension(700, 900));
                 break;
             case LARGE:
-                setSize(new Dimension(900, 1200));
-                layeredPane.setPreferredSize(new Dimension(900, 1200));
+                changeResolution(new Dimension(900, 1200));
                 break;
             default:
                 break;
         }
-        // reposition and resize existing panels
-        layeredPane.setSize(getSize());
-        layeredPane.revalidate();
-        layeredPane.repaint();
+    }
+
+    // 화면 크기 변경 메서드 추가
+    public void changeResolution(Dimension size) {
+        // 프레임 크기 변경
+        this.setSize(size);
+
+        // layeredPane 크기 조정
+        layeredPane.setPreferredSize(size);
+        layeredPane.setBounds(0, 0, size.width, size.height);
+
+        // 모든 자식 패널 크기 조정
+        for (Component component : layeredPane.getComponents()) {
+            if (component instanceof JPanel panel) {
+                panel.setPreferredSize(size);
+                panel.setBounds(0, 0, size.width, size.height);
+                panel.revalidate();
+            }
+        }
+
+        // 프레임을 화면 중앙으로 재배치
+        this.setLocationRelativeTo(null);
+
+        // 레이아웃 갱신
+        this.revalidate();
+        this.repaint();
     }
 }
