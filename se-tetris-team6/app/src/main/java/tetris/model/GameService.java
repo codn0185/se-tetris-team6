@@ -1,4 +1,4 @@
-package tetris.domain;
+package tetris.model;
 
 public class GameService {
     
